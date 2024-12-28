@@ -30,3 +30,99 @@
 *.exe
 *.out
 *.app
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific folders
+.vscode/
+.vs/
+_ReSharper*/
+JetBrains/
+
+# Build results
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+CMakeLists.txt.user
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folders for temporary files
+temp/
+tmp/
+
+# Visual Studio Code files
+.vscode/
+
+# Backup & temporary files
+*.tmp
+*.bak
+*.old
+*.swp
+*.swo
+*.ipch
+*.obj
+*.pch
+*.idb
+*.pdb
+*.opendb
+*.tlog
+*.VC.db
+*.VC.VC.opendb
+
+# Build logs
+*.log
+*.tlog
+
+# Others
+*.vspscc
+*.vssscc
+*.class
+*.csproj.user
+*.wixproj.user
+*.[Cc]ache
+*.dll
+*.exe
+*.pyc
+*.pyo
+
+# Deployment
+*.publish/
+*.deploy/
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Rider project files
+.idea/
+
+# Package Files #
+*.nupkg
+*.snupkg
+
+# End of `.gitignore`
