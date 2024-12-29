@@ -19,6 +19,21 @@
     <Filter Include="Header Files\Debug">
       <UniqueIdentifier>{4b0b4a6f-eb81-40ab-9f5b-a5f018c2bedc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\openGL">
+      <UniqueIdentifier>{875b5190-7ccc-4201-aa13-c4d472a5f5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\openGL\Window">
+      <UniqueIdentifier>{092f4697-85e1-4744-9ab5-109350329ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\openGL">
+      <UniqueIdentifier>{59f182e5-f38a-47d5-80fc-042f2e92945b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\openGL\Window">
+      <UniqueIdentifier>{711c1d3a-d40c-4a13-b7a7-0526a8c4fa52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{78500c2c-904f-4485-a128-e0fae3d58a73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debug\Logger.cpp">
@@ -31,7 +46,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="opengl\window\Window.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\openGL\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -41,11 +56,19 @@
     <ClInclude Include="Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="opengl\window\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GlobalProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="opengl\window\Window.h">
+      <Filter>Header Files\openGL\Window</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\basic.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\basic.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

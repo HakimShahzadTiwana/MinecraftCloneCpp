@@ -1,0 +1,176 @@
+
+Summary
+---------
+We need to send Vertex data to the GPU which is used by the shader programs to display the data onto the screen.
+The vertex data is the input to the Graphic pipeline, this data contains the vertices that will be used to create elements on the
+screen. 
+
+The Vertex data is sent to the Vertex Shader. This is done by using an openGL vertex buffer. We first generate the vertex buffer
+this buffer is meant to be a Array Buffer type. We bind this buffer and pass its type as an arguement so the GPU knows to make 
+room for the data of the specified type. You can have multiple buffers of different types, but each type can only have one buffer.
+We then send the data to the GPU. We also have to specify what the data in the buffer represents and how it will be relevant to 
+the shader. We do this by using attribute pointers. So we create an attribute pointer specifying what attribute we're pointing to 
+in the shader layout, how many values are used in the attribute, whats the data type, if it needs to be normalized, whats the total 
+size of one entry for the shader, and at what offset the data will be found for the attribute. So for example if a shader is 
+expecting a vector3 as its input for the position of the vertix, that means it only requires one attribute pointer which specifies 
+that for the variable in layout 0, its passing 3 values, float types, with a total of 3* float size (since thats all its expecting) 
+with an offset of 0 (sinze thats all there is).
+
+To optimize this process we use Vertex Array Buffers in the case that there are different types of vertex shaders expecting different
+types of inputs. Using Vertex Array Buffers enables us to configure everything only once as its saves those configurations in an 
+array and we can the bind and unbind the VAOs and use the idices for different confirguration. This way we dont have to configure
+everytime we need to switch. 
+
+Additionally when making shapes out of primitive there are cases where many vertices overlap, in those cases we can discard the 
+extra vertices and use Element Buffer Objects to tell the GPU in what order to draw the vertices. This saves processing of
+unneccessary vertices. Element Buffers are similar to VBOs except they are ElementBuffer type, and the data it contains are the 
+indices of the vertix data being used. The Vertex Array also saves the EBO's configuration as well so at the end we still only
+need to bind unbind VAOs since they indirectly handle both EBOs and VBOs
+
+This is how the data is passed to the first Shader in the Pipeline, the Vertex Shader. The vertex shader takes in a single vertex
+and transforms the 3D coordinates into another form of 3D coordinates and allows for other basic processing of the vertex attributes.
+
+Then the data is sent to the Geometry Shader, which is optional. It takes in a collection of vertices that form a primitive and 
+has the ability to add more vertices to create other (or more of the same) primitives. For example adding a vertex in a side of a 
+triangle to create two triangles. 
+
+Then the primitive assembly takes place where it takes all the vertix data from the vertex (or geometry) shader and assembles all the 
+points into primitives. (The vertex and geometry shaders just manipulate vertices, there are no actual shapes assembled before this)
+
+The output of the primitive assembly is then sent to the rasterization stage where it maps the primitve shapes made onto the pixels
+on the final screen resulting in fragments for the fragment shader to use.
+
+The fragment shader takes in this data and calculates the final pixel color. This is where it takes into consideration of other factors
+such as lighting etc.
+
+Finally the data is sent to the last stage where alpha tests and blending is done.
+
+Some of these stages can be manipulated by the programmer by writting shader code using openGLs Shader Language GLSL. For example 
+the vertex shader and fragment shader has to be made by the progammer since there are no defaults, unlike the geometry shader stage, 
+which is why its optional. Rasterization and Primitive Assembly can not be modified. 
+
+These shaders are compiled at run time and linked together forming a Shader program, which then can be set as active and used in the 
+render loop
+
+
+
+
+The graphics pipeline 
+----------------------
+1 - Vertex Data
+2 - Vertex Shader 
+3 - Fragment Shader
+
+
+Steps in generating a triangle
+--------------------------------
+1 - First we created an array with 9 elements. 3 points/vertices having 3 values for co-oridnates
+
+2 - We generate a Vertex Buffer Object 
+
+3 - We bind the Vertex Buffer Object to tell the GPU to keep memory for the Object.
+Since this Buffer is an Array Buffer type, we let the GPU know as well. 
+There are many types of Buffers and multiple types of buffers can be bind to the GPU, but only one buffer per type
+
+4 - We then send the data to the GPU, we tell it which type of buffer data it is (Array), the size of data, actual data, and
+a flag for how to use the data, in this case we use a Static_Draw type, since the data will be used a lot but wont change a lot.
+There are other options as well.
+
+5 - We then create a very basic vertex shader file with the .vert extension.
+
+6 - We create a vertex shader object by telling opengl to create shader and mentioning what type, in this case Vertex Shader
+
+7 - We send the soruce data in the .vert shader file to the vertex shader object 
+
+8 - We compile the source shader code at run time and also add error checks and logs
+
+9 - Repeat Step 5-8 but for a Fragment Shader type with a .frag file
+
+10 - We then create a Shader Program object, this links all the compile shaders together and then activate the program.
+The program basically links the outputs of each shader to the inputs to the next shader being used
+
+11 - We also added the Attrib pointers for the shaders to use. This implementation is done after sending data to the VBO (step 4)
+These are used to pass data to the Vertex Shader from the Vertex Buffer (layout = 0 etc.)
+Refer to the VertexAttribPointer Parameter Details section.
+
+12 - We then make a Vertex Array object, these are used to save configurations of different VBOs so that we do not have to 
+configure each vertex buffer we make multiple times, only need to do it once and they will be saved in the VAO
+
+13 - In our render loop we activate our shader program, bind the VAO (and indirectly bind the VBO as well) and finally draw the 
+primitves we would like. In this case the triangles. There are other types of primitives as well.
+
+Drawing a Rectangle 
+--------------------
+After the steps folowing the Drawing a Triangle section we 
+
+1 - Add more vertices, this is so we can create a reactanlge from two triagles.
+This would mean we have 6 vertices in total, but 2 of those overlap with each other and are the same.
+
+2 - To optimize the process, we use an Element Buffer Object, and instead keep 4 vertices, dicarding the duplicated two vertices
+The EBO is used to tell openGL in what order to draw the vertices by using their index in the Vertex buffer. 
+This way we dont have to process the extra vertices and still have the same output.
+For this we need an array of indices to tell openGL in which order to draw the vertices
+
+3 - So we generate EBO after generating the VBO with the same way. 
+
+4 - We also bind the EBO and send data to the EBO similar to the way we do for VBOs. Only difference is we use the Element Array type
+and use indices for the data instead of using the Array type and using vertices for the data
+
+5 - The VAO's also keep the EBO's in their configuration. We have to make sure that we unbind the EBO after unbinding the VAO 
+or else those configurations wont be saved
+
+6 - Finally instead of using DrawArrays call we use the DrawElements call in the render loop
+
+
+
+
+
+Buffer Types
+-------------
+1 - Array Buffer : Vertex Buffer 
+2 - Element Buffer : Element Buffer
+
+Buffer Usage Types
+------------------
+1 - Static Draw : Data is set once and used often
+2 - Dynamic Draw : Data is set many times and if used often
+3 - Stream Draw : Data is only set once and is used a few times
+
+Shader Types
+-------------
+1 - Vertex Shader
+2 - Fragment Shader
+
+Primiteve Types for Drawing
+---------------------------
+1 - Triangles
+2 - Lines
+
+
+VertexAttribPointer Parameter Details
+--------------------------------------
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);  
+
+1 - The first parameter specifies which vertex attribute we want to configure. 
+Remember that we specified the location of the position vertex attribute in the vertex shader with layout (location = 0). 
+This sets the location of the vertex attribute to 0 and since we want to pass data to this vertex attribute, we pass in 0.
+
+2 - The next argument specifies the size of the vertex attribute. 
+The vertex attribute is a vec3 so it is composed of 3 values.
+
+3 - The third argument specifies the type of the data which is GL_FLOAT (a vec* in GLSL consists of floating point values).
+
+4 - The next argument specifies if we want the data to be normalized. 
+If we're inputting integer data types (int, byte) and we've set this to GL_TRUE, the integer data is normalized to 0 
+(or -1 for signed data) and 1 when converted to float.
+
+5 - The fifth argument is known as the stride and tells us the space between consecutive vertex attributes.
+Since the next set of position data is located exactly 3 times the size of a float away we specify that value as the stride.
+Note that since we know that the array is tightly packed (there is no space between the next vertex attribute value)
+we could've also specified the stride as 0 to let OpenGL determine the stride (this only works when values are tightly packed).
+Whenever we have more vertex attributes we have to carefully define the spacing between each vertex attribute
+
+6 - The last parameter is of type void* and thus requires that weird cast.
+This is the offset of where the position data begins in the buffer.
+Since the position data is at the start of the data array this value is just 0.
