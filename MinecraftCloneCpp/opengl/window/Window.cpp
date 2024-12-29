@@ -5,14 +5,6 @@
 std::unique_ptr<Window> Window::instance;
 GLFWwindow* Window::window = nullptr;
 
-Window& Window::GetInstance()
-{
-	if (!instance) 
-	{
-		instance = std::make_unique<Window>();
-	}
-	return *instance;
-}
 
 bool Window::initWindow()
 {

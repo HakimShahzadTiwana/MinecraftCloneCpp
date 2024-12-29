@@ -9,13 +9,13 @@
 
 int main()
 {	
-	if (!Window::GetInstance().initWindow())
+	if (!Window::initWindow())
 	{
 		LOG(Error, "Could not init Window!");
 		return 0;
 	}
 
-	Window::GetInstance().runWindow();
+	Window::runWindow();
 
 	return 0;
 }

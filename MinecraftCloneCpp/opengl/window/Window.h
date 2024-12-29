@@ -15,20 +15,17 @@ public:
 	Window() {};
 	~Window() { cleanUp(); };
 
-	// Returns the instance of the singleton window object
-	static Window& GetInstance();
-
 	// Initialize window 
-	 bool initWindow();
+	static bool initWindow();
 
 	// Returns the reference of glfw Window
-	 GLFWwindow* getGlfwWindow() { return window; };
+	 static GLFWwindow* getGlfwWindow() { return window; };
 
 	// Starts the render loop 
-	 void runWindow();
+	 static void runWindow();
 
 	// Terminate proccesses and cleanup
-	 void cleanUp();
+	static void cleanUp();
 
 	
 private:
