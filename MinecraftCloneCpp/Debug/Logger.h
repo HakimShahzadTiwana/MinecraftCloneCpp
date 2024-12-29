@@ -3,8 +3,10 @@
 #include <sstream>
 #include <format>
 #include <string>
-#define Log(level, _string, ...) Logger::log(LogLevel::level, "{}:: " + std::string(_string), __func__ , ##__VA_ARGS__)
 
+
+#define LOG(level, _string, ...) Logger::log(LogLevel::level, "{}:: " + std::string(_string), __func__ , ##__VA_ARGS__)
+#define LOG_FUNC() LOG(Verbose,"")
 
 enum class LogLevel {Verbose = 0,Log = 1,Warning = 2,Error = 3};
 
@@ -49,7 +51,7 @@ static void Logger::log(LogLevel level, const std::string& formatString, Args&&.
 		formatMessage(oss, formatString, std::forward<Args>(args)...);
 		
 		// Display formatted log messasge
-		std::cout << getLogLevelPrefix(logLevel) << oss.str() << std::endl;
+		std::cout << getLogLevelPrefix(level) << oss.str() << std::endl;
 	}
 }
 
@@ -61,6 +63,8 @@ static void Logger::formatMessage(std::ostringstream& oss, const std::string& fo
 	// Find the position of the first argument injection symbol
 	size_t formatPos = formatString.find("{}");
 
+	// C++20 format function but wanted to implement one myself
+	//std::string message = std::vformat(formatString, std::make_format_args(std::forward<Args>(args)...));
 
 	// Check if the argumenet injection symbol was found
 	if (formatPos != std::string::npos)
