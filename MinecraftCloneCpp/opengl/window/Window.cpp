@@ -70,52 +70,28 @@ void Window::runWindow()
 
 	Shader shader("Shaders/basic.vert", "Shaders/basic.frag");
 
+	// Create buffers
+	VAO vao;
+	VBO vbo;
+	EBO ebo;
 
-	// Generate Vertex Array Object 
-	// These are used to save VBO attribute configurations
-	// So that you dont have to keep creating attrib pointers every time you need to bind the VBOs, only have to do it once
-	// But have to make sure that the VAO is generated before attempting to make the attrib pointers 
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
+	// Bind buffers
+	vao.bind();
+	vbo.bind();
+	ebo.bind();
 
-	// Generate Vertex Buffer and store it in a vertex buffer object
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
+	// upload data to buffers
+	vbo.uploadData(vertices, sizeof(vertices));
+	ebo.uploadData(indices, sizeof(indices));
 
-	// Generate Element Buffer 
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-
-
-	// Again, make sure to bind VAO before the VBO so that it saves configurations 
-	glBindVertexArray(VAO);
-
-	// Bind the generated buffer.
-	// What we're doing here is telling the gpu to keep memory for the vertex buffer. This buffer is an ArrayBuffer type.
-	// You can have multiple types of buffers binded, but only one buffer can be binded for each type
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	
-	// We send the data of the vertex buffer to the memory that is being used for the array buffer
-	// Since the vertex data will be used alot but wont be changed, we use a GL Static Draw type.
-	// For info about more types look at the Notes.txt file (Buffer Usage Types)
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Bind the generated Element Buffer object
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-	// Refer to Notes.txt for more info about Element Array Buffer (Drawing a Rectangle)
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	// Tell openGL about the layout of the vertex data and enable the Attrib Array.
-	// For info about the parameters refer to Notes.txt (VertexAttribPointer Parameter Details)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	// Link buffers to vao
+	vao.LinkVBO(vbo, 0);
 
 	// Unbind buffers
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	vao.unBind();
+	vbo.unBind();
+	ebo.unBind();
+
 
 	if (RenderProperties::wireFrameMode) 
 	{
@@ -137,7 +113,7 @@ void Window::runWindow()
 		// Render here
 		// Activate the shader program
 		shader.activate();
-		glBindVertexArray(VAO);
+		vao.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		

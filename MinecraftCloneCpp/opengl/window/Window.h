@@ -4,6 +4,11 @@
 #include <memory>
 
 #include "openGL/shader/Shader.h"
+
+#include "openGL/buffer/VBO.h"
+#include "openGL/buffer/EBO.h"
+#include "openGL/buffer/VAO.h"
+
 #include "GlobalProperties.h"
 
 class Window 
