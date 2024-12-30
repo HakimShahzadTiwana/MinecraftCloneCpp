@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 
+#include "openGL/shader/Shader.h"
 #include "GlobalProperties.h"
 
 class Window 

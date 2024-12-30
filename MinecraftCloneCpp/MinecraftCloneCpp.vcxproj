@@ -141,12 +141,14 @@
     <ClInclude Include="Debug\Logger.h" />
     <ClInclude Include="GlobalProperties.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="openGL\shader\Shader.h" />
     <ClInclude Include="opengl\window\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debug\Logger.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="opengl\shader\Shader.cpp" />
     <ClCompile Include="opengl\window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

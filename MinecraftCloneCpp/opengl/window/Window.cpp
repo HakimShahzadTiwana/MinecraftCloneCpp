@@ -68,79 +68,7 @@ void Window::runWindow()
 	};
 
 
-	const char* vertexShaderSource = "#version 460 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
-	const char* fragShaderSource = "#version 460 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\0";
-
-	// Create a Vertex Shader 
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-	// Inject the source code of the shader 
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-
-	// Compile the shader
-	glCompileShader(vertexShader);
-
-	// Check for errors in compilation
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		LOG(Error, " Vertex Shader failed to compile with the following information : {}", infoLog);
-	}
-
-	// Create a fragment shader
-	unsigned int fragShader;
-	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	// Inject the fragment shader source code 
-	glShaderSource(fragShader, 1, &fragShaderSource, NULL);
-
-	// Compile the source code
-	glCompileShader(fragShader);
-
-	// Check for errors in compilation
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragShader, 512, NULL, infoLog);
-		LOG(Error, " Fragment Shader failed to compile with the following information : {}", infoLog);
-	}
-
-	// Create a shader program
-	// A Shader program links each shader together and sends the output of one shader to the inputs of the next
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	// Attach shaders and link them
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragShader);
-	glLinkProgram(shaderProgram);
-
-	// Check for erros while linking
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		LOG(Error, " Shader program failed to link with the following information : {}", infoLog);
-	}
-
-	// Dont need the individual shaders now since we've compiled and linked them into the program
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragShader);
-
+	Shader shader("Shaders/basic.vert", "Shaders/basic.frag");
 
 
 	// Generate Vertex Array Object 
@@ -208,7 +136,7 @@ void Window::runWindow()
 
 		// Render here
 		// Activate the shader program
-		glUseProgram(shaderProgram);
+		shader.activate();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -220,6 +148,8 @@ void Window::runWindow()
 		// Check for events that have been triggered
 		glfwPollEvents();
 	}
+
+	shader.cleanUp();
 }
 
 

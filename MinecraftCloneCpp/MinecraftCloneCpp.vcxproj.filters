@@ -48,6 +48,9 @@
     <ClCompile Include="opengl\window\Window.cpp">
       <Filter>Source Files\openGL\Window</Filter>
     </ClCompile>
+    <ClCompile Include="opengl\shader\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Debug\Logger.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="opengl\window\Window.h">
       <Filter>Header Files\openGL\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="openGL\shader\Shader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
