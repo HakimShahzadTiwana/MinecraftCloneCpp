@@ -52,6 +52,18 @@ which is why its optional. Rasterization and Primitive Assembly can not be modif
 These shaders are compiled at run time and linked together forming a Shader program, which then can be set as active and used in the 
 render loop
 
+Shader Programing
+------------------
+Shaders start with a # version xxx core/compatible heading
+Then it has in variables that are used as inputs and out variables used for outputting to the next shader
+The vertex shader's in variables are also known as attribute pointers that we have to specify in our code
+This is why they require a layout (location = x) so that we can tell our code how to send the data to the vertex shader
+GLSL has a feature called sizziling where you can manipulate vectors in the following way vec_2  = vec_1.xyxx or vec_2 = vec1_xyw etc
+A uniform variable acts as a global variable that can be accessed by any shader and does not require to be passed by shaders
+Unlike normal variables, like for example if you want to send colors to the fragment shader from the vertex buffer, you need to input
+the color vector to the vertex shader first, which will be copied to an output variable in the vertex shader and later be used
+as the input variable of the fragment shader. To link the input and output variables between shaders we have to make sure that
+the variable names are the same.
 
 
 
@@ -174,3 +186,53 @@ Whenever we have more vertex attributes we have to carefully define the spacing 
 6 - The last parameter is of type void* and thus requires that weird cast.
 This is the offset of where the position data begins in the buffer.
 Since the position data is at the start of the data array this value is just 0.
+
+
+
+Textures
+---------
+Textures are like images that can be mapped onto the vertices. We have to pass texture co-ordinates or texcords in the vertex attribute
+to tell the shaders how the texture will be mapped to the vertex point.Retrieving the texture color using texture coordinates is
+called sampling. 
+Tex coords are mapped from 0 to 1. In the case of a 2d Texture, 0,0 is the bottom left and 1,1 is the top right 
+If texture coords are mapped out of the range of 0,1 then by default the texture will start repeating. This behavior can be changed to 
+one of the following:
+1 - GL_REPEAT: The default behavior for textures. Repeats the texture image.
+2 - GL_MIRRORED_REPEAT: Same as GL_REPEAT but mirrors the image with each repeat.
+3 - GL_CLAMP_TO_EDGE: Clamps the coordinates between 0 and 1. The result is that higher coordinates become clamped to the edge,
+resulting in a stretched edge pattern.
+4 - GL_CLAMP_TO_BORDER: Coordinates outside the range are now given a user-specified border color.
+
+These options are set per vertex co-ordinate so each cordinate can have a different behavior
+Texture co-ordinate follow str like vertex coordinates follow xyz
+
+When the texcords have to be mapped they need to select a pixel of the texture or texel to map to. There are several options on how
+this mapping can be done. This is called texture filtering. The common ones are Nearest point filtering and Bilinear filtering
+Nearest point filtering selects the nearest pixel to the tex cord, whereas the bilinear filtering takes an interpolation of the 
+neighbouring texels and produces an average from those colors. 
+This results in Nearest point having a jagged pixelated look if a low res texture is used and bilinear filtering having a smooth but
+blurred look. Texture filtering can be set for magnifying or minifying operations and you can specify what type of filtering
+to use when these operations take place
+
+Mipmaps are multiple copies of the texture where each copy is half the size of the last, starting from the original size. All these
+are stored in a single mipmap. This is used for when an object containing a texture is rendered as a small object since its far 
+away. Without mipmaps the far away object will use the original sized high resolution texture and openGL has trouble mapping the 
+texcords for all the smaller sized fragments causing artifacts. So with mipmaps the smaller sized maps are used for when the fragments
+are small, this is based on how far away/ smaller the size is. Switching between mipmaps also causes artifacts so we can apply
+the same filtering methods for those as well. We can specifiy with using the other options for filtering which include mipmap options.
+We only need to specifiy mipmap options for minifying since they are used when scaling down. They dont work when magnifying.
+
+5 - GL_NEAREST_MIPMAP_NEAREST: takes the nearest mipmap to match the pixel size and uses nearest neighbor interpolation for texture
+sampling.
+6 - GL_LINEAR_MIPMAP_NEAREST: takes the nearest mipmap level and samples that level using linear interpolation.
+7 - GL_NEAREST_MIPMAP_LINEAR: linearly interpolates between the two mipmaps that most closely match the size of a pixel and samples
+the interpolated level via nearest neighbor interpolation.
+8 - GL_LINEAR_MIPMAP_LINEAR: linearly interpolates between the two closest mipmaps and samples the interpolated level via 
+linear interpolation
+
+ GLSL has a built-in data-type for texture objects called a sampler that takes as a postfix the texture type we want
+ e.g. sampler1D, sampler3D or in our case sampler2D. We can then add a texture to the fragment shader by simply declaring a
+ uniform sampler2D that we later assign our texture to.
+
+
+

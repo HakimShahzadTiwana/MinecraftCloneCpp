@@ -26,12 +26,12 @@ void VAO::cleanUp()
 	glDeleteVertexArrays(1,&ID);
 }
 
-void VAO::LinkVBO(VBO vbo, GLuint layout)
+void VAO::LinkVBO(VBO vbo, GLuint layout, GLsizei stride, int offset )
 {
 	vbo.bind();
 	// Tell openGL about the layout of the vertex data and enable the Attrib Array.
 	// For info about the parameters refer to Notes.txt (VertexAttribPointer Parameter Details)
-	glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE,stride, (void*)offset);
 	glEnableVertexAttribArray(layout);
 	vbo.unBind();
 }

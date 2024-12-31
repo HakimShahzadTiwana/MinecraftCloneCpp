@@ -43,11 +43,11 @@ Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentS
 	if (!bSuccess)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, info);
-		LOG(Warning, "Failed to compile vertex shader. INFO : {}", info);
+		LOG(Warning, "Failed to compile fragment shader. INFO : {}", info);
 	}
 	else
 	{
-		LOG(Log, "Compiled Vertex Shader Successfully.");
+		LOG(Log, "Compiled fragment Shader Successfully.");
 	}
 
 
@@ -82,8 +82,6 @@ Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentS
 
 void Shader::activate()
 {
-	//LOG_FUNC();
-
 	glUseProgram(ID);
 }
 
@@ -93,6 +91,24 @@ void Shader::cleanUp()
 
 	glDeleteProgram(ID);
 }
+
+void Shader::setBool(const std::string& name, bool value) const
+{
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+}
+void Shader::setInt(const std::string& name, int value) const
+{
+	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Shader::setFloat(const std::string& name, float value) const
+{
+	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+void Shader::set3FloatVector(const std::string& name, float f1, float f2, float f3) const
+{
+	glUniform3f(glGetUniformLocation(ID, name.c_str()), f1, f2, f3);
+}
+
 
 std::string Shader::read_file_contents(const std::string& file)
 {

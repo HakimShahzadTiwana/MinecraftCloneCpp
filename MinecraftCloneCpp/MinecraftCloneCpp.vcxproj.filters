@@ -34,6 +34,21 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{78500c2c-904f-4485-a128-e0fae3d58a73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\openGL\Shader">
+      <UniqueIdentifier>{816fcd2c-87d2-45b9-ad1a-3d7542dab9b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\openGL\Buffer">
+      <UniqueIdentifier>{08800cd2-0033-4807-b0a6-7c0a4d1db672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\openGL\Shader">
+      <UniqueIdentifier>{18431f9d-c80b-4bd3-a661-cfbeacbd66d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\openGL\Buffer">
+      <UniqueIdentifier>{24038d1a-1999-4322-be94-3297489356cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{fc74f3d6-018c-4dbf-9ecf-57d36003b86b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debug\Logger.cpp">
@@ -48,17 +63,17 @@
     <ClCompile Include="opengl\window\Window.cpp">
       <Filter>Source Files\openGL\Window</Filter>
     </ClCompile>
-    <ClCompile Include="opengl\shader\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="opengl\buffer\VBO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="opengl\buffer\EBO.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\openGL\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="opengl\shader\Shader.cpp">
+      <Filter>Source Files\openGL\Shader</Filter>
     </ClCompile>
     <ClCompile Include="opengl\buffer\VAO.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\openGL\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="opengl\buffer\VBO.cpp">
+      <Filter>Source Files\openGL\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,20 +89,20 @@
     <ClInclude Include="opengl\window\Window.h">
       <Filter>Header Files\openGL\Window</Filter>
     </ClInclude>
-    <ClInclude Include="openGL\shader\Shader.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="openGL\buffer\EBO.h">
+      <Filter>Header Files\openGL\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="openGL\buffer\IBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="openGL\buffer\VBO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="openGL\buffer\EBO.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\openGL\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="openGL\buffer\VAO.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\openGL\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="openGL\buffer\VBO.h">
+      <Filter>Header Files\openGL\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="openGL\shader\Shader.h">
+      <Filter>Header Files\openGL\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -97,5 +112,13 @@
     <None Include="Shaders\basic.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\wall.jpg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\container.jpg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -1,7 +1,15 @@
 #version 460 core
+
+in vec4 vertexColor;
+in vec2 texCoords;
+
 out vec4 FragColor;
+
+uniform sampler2D texSampler1;
+uniform sampler2D texSampler2;
+uniform float alpha;
 
 void main()
 {
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    FragColor = mix(texture(texSampler1, texCoords), texture(texSampler2, texCoords), alpha) * vertexColor;
 } 
