@@ -1,6 +1,8 @@
+#include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 #include "Debug/Logger.h"
 #include "fstream"
+
 
 Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
 {
@@ -104,9 +106,14 @@ void Shader::setFloat(const std::string& name, float value) const
 {
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
-void Shader::set3FloatVector(const std::string& name, float f1, float f2, float f3) const
+void Shader::setVector3f(const std::string& name, glm::vec3 vec) const
 {
-	glUniform3f(glGetUniformLocation(ID, name.c_str()), f1, f2, f3);
+	glUniform3f(glGetUniformLocation(ID, name.c_str()), vec.x, vec.y, vec.z);
+}
+
+void Shader::setMat4f(const std::string& name, glm::mat4 mat) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 

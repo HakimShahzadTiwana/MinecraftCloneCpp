@@ -233,6 +233,17 @@ linear interpolation
  GLSL has a built-in data-type for texture objects called a sampler that takes as a postfix the texture type we want
  e.g. sampler1D, sampler3D or in our case sampler2D. We can then add a texture to the fragment shader by simply declaring a
  uniform sampler2D that we later assign our texture to.
+ We assign an integer walue to the tex sampler so it knows what actuve texture slot to sample from. It uses this texture and maps it
+ to the passed texture coords.
+ We can assign multiple slots (16 or more depending on the GPU) as active textures.
 
+
+ Co-ordinate Systems
+ ---------------------
+ 1 - Local/Object Space
+ 2 - World Space
+ 3 - View/Eye Space
+ 4 - Clip Space
+ 5 - Screen Space
 
 

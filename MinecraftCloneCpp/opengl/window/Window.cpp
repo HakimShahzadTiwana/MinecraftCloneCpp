@@ -1,7 +1,10 @@
 #include <stb/stb_image.h>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Window.h"
 #include "Debug/Logger.h"
+#include "openGL/Texture/Texture.h"
+
 
 std::unique_ptr<Window> Window::instance;
 GLFWwindow* Window::window = nullptr;
@@ -96,55 +99,9 @@ void Window::runWindow()
 	ebo.unBind();	
 
 
-	// Images usually have flipped co-ordinates compared to texCoords so we flip them again
-	stbi_set_flip_vertically_on_load(true);
-
-	// Load Texture file 
-	int width, height, nChannels;
-	unsigned char* texData = stbi_load("Textures/container.jpg", &width, &height, &nChannels,0);
-
-	GLuint texture;
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Convert loaded image data into texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
-
-	// Generate mip maps
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	texData = stbi_load("Textures/wall.jpg", &width, &height, &nChannels, 0);
-	GLuint texture1;
-
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Convert loaded image data into texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
-
-	// Generate mip maps
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// Release the image data since we've converted it into a texture and dont need it anymore
-	stbi_image_free(texData);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
+	Texture tex1("Textures/container.jpg");
+	Texture tex2("Textures/wall.jpg");
+	
 	shader.activate();
 	shader.setInt("texSampler1", 0);
 	shader.setInt("texSampler2", 1);
@@ -180,15 +137,26 @@ void Window::runWindow()
 		float green = 0.5f + 0.5f * sin(timeValue + 2.094f); // 2?/3 radians phase shift
 		float blue = 0.5f + 0.5f * sin(timeValue + 4.188f); // 4?/3 radians phase shift
 
+		glm::mat4 trans = glm::mat4(1.0f);
+		//float rotSpeed = 50.0f;
+		//trans = glm::translate(trans, glm::vec3(1, 1, 0));
+		//trans = glm::rotate(trans, glm::radians((float)glfwGetTime()* rotSpeed), glm::vec3(0.0f, 0.0f, 1.0f));
+		//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 1));*/
+		shader.setMat4f("transform", trans);
+		
+		
 		// Send the color offset to the shader
-		shader.set3FloatVector("colorOffset", red, green, blue);
+		shader.setVector3f("colorOffset", glm::vec3(red, green, blue));
 		shader.setFloat("alpha", red);
 
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
+		
+		tex1.bind();
+		tex1.setActiveTexture(0);
+
+		tex2.bind();
+		tex2.setActiveTexture(1);
+
 		vao.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

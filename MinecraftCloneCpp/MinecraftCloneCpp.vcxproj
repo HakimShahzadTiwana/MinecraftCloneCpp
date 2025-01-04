@@ -146,6 +146,7 @@
     <ClInclude Include="openGL\buffer\VAO.h" />
     <ClInclude Include="openGL\buffer\VBO.h" />
     <ClInclude Include="openGL\shader\Shader.h" />
+    <ClInclude Include="openGL\Texture\Texture.h" />
     <ClInclude Include="opengl\window\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +157,7 @@
     <ClCompile Include="opengl\buffer\VAO.cpp" />
     <ClCompile Include="opengl\buffer\VBO.cpp" />
     <ClCompile Include="opengl\shader\Shader.cpp" />
+    <ClCompile Include="opengl\Texture\Texture.cpp" />
     <ClCompile Include="opengl\window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -49,6 +49,12 @@
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{fc74f3d6-018c-4dbf-9ecf-57d36003b86b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\openGL\Texture">
+      <UniqueIdentifier>{aa24878d-6d4d-4212-93f6-fa9062207bf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\openGL\Texture">
+      <UniqueIdentifier>{e8dce9b3-ac59-4e06-a63a-446e2a55cc4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debug\Logger.cpp">
@@ -74,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="opengl\buffer\VBO.cpp">
       <Filter>Source Files\openGL\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="opengl\Texture\Texture.cpp">
+      <Filter>Source Files\openGL\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="openGL\shader\Shader.h">
       <Filter>Header Files\openGL\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="openGL\Texture\Texture.h">
+      <Filter>Header Files\openGL\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
