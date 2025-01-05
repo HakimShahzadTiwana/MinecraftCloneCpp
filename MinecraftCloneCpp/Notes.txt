@@ -240,10 +240,42 @@ linear interpolation
 
  Co-ordinate Systems
  ---------------------
- 1 - Local/Object Space
- 2 - World Space
- 3 - View/Eye Space
- 4 - Clip Space
- 5 - Screen Space
+ 1 - Local/Object Space : Space local to the object, wrt the origin of the object
+ 2 - World Space : Position of an object in the game world, wrt the origin of the world. 
+ 3 - View/Eye Space : Space seen from the camera's point of view. World positions are translated to bring it in view of the camera
+ 4 - Clip Space : openGL expects co-oridnates to be in range of -1 to 1, anything outside this range will be discarded/clipped.
+ Since working with co-ordinates in this range isn't sensible, we use our own co-ordinate system that we can define the range to 
+ and later on normalize the to the -1 to 1 range. The projection matrix is used to then convert points in out co-ordinate system into
+ the normalized one. This creates a viewing box, aka frustum, in which the co-ordinates that are in the box are shown and the rest
+ are clipped. 
+ 5 - Screen Space : openGL requires the points to be in clip space after going through the vertex shader and handles the rest by
+ performing perspective division on the clip-space coordinates to transform them to normalized-device coordinates.
+ OpenGL then uses the parameters from glViewPort to map the normalized-device coordinates to screen coordinates where each 
+ coordinate corresponds to a point on your screen, aka viewport transform
 
+ Model View Projection Matrices
+ -----------------------------
+ 1 - Model : Converts Local space to World Space
+ 2 - View : Converts World space to Veiw Space (brings world objects in the rendering windows view)
+ 3 - Projection : Converts View Space to Clipping Space. This can be done using Orthographic or Perpective Projection.
+
+ Clip Vector = Projection Matrix * View Matrix * Model Matrix * Local Space Vector (Matrix Multiplication goes right to left)
+ (Vertex Shader Output needs to be in the form of a Clip Vector)
+
+ Types of Projections
+ ---------------------
+ 1 - Orthographic : Defines a cuboid like frustum, where we define the width and height of the near and far planes, and the distance
+ between the planes. Anything behind the far plane and infront of the near plane is clipped out. This gives a 2D type projection
+ 2 - Perpective : Defines a pyramid like frustum, starting from the camera (tip of the pyramid). This allows us to see far objects
+ as smaller relative to nearer objects and hence gives a 3D type proejction. This is done by increasing the w component of the 
+ vertex co-ordinate as the object goes farther away. Once they are transformed into clip space the range from -w to w. Each 3D co-ordinate
+ is divided with the w component hence scalign them down as w is increased. We define the fov angle which sets how large the viewspace is.
+ then we define the aspect ratio which is width/height and finally the distance from the planes.
+
+
+ OpenGL Co-ordinate System 
+ ---------------------------
+ OpenGL is a right handed co-ordinate system. Meaning the positive x-axis is to ur right.
+ Take your right hand, face the palm towards ur face, the thumb pointing outward (positive x-axis), index finger pointing upward
+ (positive y-axis) and middle finger pointing towards your face (positive z-axis).
 

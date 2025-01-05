@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Debug">
-      <UniqueIdentifier>{36290836-f5cd-498a-a8fa-f272363511c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Debug">
-      <UniqueIdentifier>{4b0b4a6f-eb81-40ab-9f5b-a5f018c2bedc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\openGL">
       <UniqueIdentifier>{875b5190-7ccc-4201-aa13-c4d472a5f5f8}</UniqueIdentifier>
     </Filter>
@@ -55,11 +49,14 @@
     <Filter Include="Header Files\openGL\Texture">
       <UniqueIdentifier>{e8dce9b3-ac59-4e06-a63a-446e2a55cc4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Debugging">
+      <UniqueIdentifier>{36290836-f5cd-498a-a8fa-f272363511c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Debugging">
+      <UniqueIdentifier>{4b0b4a6f-eb81-40ab-9f5b-a5f018c2bedc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Debug\Logger.cpp">
-      <Filter>Source Files\Debug</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -84,11 +81,14 @@
     <ClCompile Include="opengl\Texture\Texture.cpp">
       <Filter>Source Files\openGL\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="Camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugging\Logger.cpp">
+      <Filter>Source Files\Debugging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Debug\Logger.h">
-      <Filter>Header Files\Debug</Filter>
-    </ClInclude>
     <ClInclude Include="Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="openGL\Texture\Texture.h">
       <Filter>Header Files\openGL\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugging\Logger.h">
+      <Filter>Header Files\Debugging</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

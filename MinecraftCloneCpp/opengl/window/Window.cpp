@@ -2,15 +2,25 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Window.h"
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 #include "openGL/Texture/Texture.h"
 
 
-std::unique_ptr<Window> Window::instance;
-GLFWwindow* Window::window = nullptr;
+Window::Window(int width, int height, const std::string& windowName)
+{
+	LOG_FUNC();
 
+	initWindow(width,height,windowName);
+}
 
-bool Window::initWindow()
+Window::~Window()
+{
+	LOG_FUNC();
+
+	cleanUp();
+}
+
+bool Window::initWindow(int width, int height, const std::string& windowName)
 {
 	LOG_FUNC();
 
@@ -23,7 +33,7 @@ bool Window::initWindow()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, OpenGLProperties::profileType);
 
 	// Create window object
-	window = glfwCreateWindow(WindowProperties::width, WindowProperties::height, "MinceCraftClone", NULL, NULL);
+	window = glfwCreateWindow(width, height, windowName.c_str(), NULL, NULL);
 
 	if (!window)
 	{
@@ -32,8 +42,12 @@ bool Window::initWindow()
 		return false;
 	}
 
+
 	// Set window object as current context
 	glfwMakeContextCurrent(window);
+
+	// Associates any type of pointer (in this case the this pointer) to a window
+	glfwSetWindowUserPointer(window, this);
 
 	// Init Glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -43,34 +57,107 @@ bool Window::initWindow()
 		return false;
 	}
 
-	// Set viewport
-	glViewport(0, 0, WindowProperties::width, WindowProperties::height);
 
-	// Bind callback
+
+	// Set viewport
+	glViewport(0, 0, width, height);
+
+	lastCursorX = width / 2;
+	lastCursorY = height / 2;
+
+	// Bind callbacks
 	glfwSetFramebufferSizeCallback(window, [](auto window, int width, int height)
 	{
-		LOG(Verbose, "FrameBuffer Size callback called");
-		glViewport(0, 0, width, height);
+			auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+			thisWindow->handleResizeCallback(width,height);
 	});
+
+	glfwSetCursorPosCallback(window, [](auto window, double xPos, double yPos) 
+	{
+		auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+		thisWindow->handleMouseCallback(xPos, yPos);
+		
+	});
+
+	glfwSetScrollCallback(window, [](auto window, double xOffset, double yOffset) 
+	{
+		auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+		thisWindow->handleScrollCallback(xOffset, yOffset);
+	});
+	
 
 	return true;
 }
 
-void Window::runWindow()
+void Window::run()
 {
 	LOG_FUNC();
 
 	float vertices[] = {
-	 // Pos             //Color           // Texcoords
-	 0.5f,  0.5f, 0.0f, 1.0f, 0.0f ,0.0f, 1.0f, 1.0f,   // top right
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,// bottom right
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f ,0.0f, 0.0f, 0.0f, // bottom left
-	-0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f  // top left 
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
+
+	glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	unsigned int indices[] = {  // note that we start from 0!
 		0, 1, 3,   // first triangle
 		1, 2, 3    // second triangle
 	};
+
 
 
 	Shader shader("Shaders/basic.vert", "Shaders/basic.frag");
@@ -78,25 +165,25 @@ void Window::runWindow()
 	// Create buffers
 	VAO vao;
 	VBO vbo;
-	EBO ebo;
+	//EBO ebo;
 
 	// Bind buffers
 	vao.bind();
 	vbo.bind();
-	ebo.bind();
+	//ebo.bind();
 
 	// upload data to buffers
 	vbo.uploadData(vertices, sizeof(vertices));
-	ebo.uploadData(indices, sizeof(indices));
+	//ebo.uploadData(indices, sizeof(indices));
 
 	// Link buffers to vao
-	vao.LinkVBO(vbo, 0, 8 * sizeof(float), 0);
-	vao.LinkVBO(vbo, 1, 8 * sizeof(float), 3 * sizeof(float));
-	vao.LinkVBO(vbo, 2, 8 * sizeof(float), 6 * sizeof(float));
+	vao.LinkVBO(vbo, 0, 5 * sizeof(float), 0);
+	vao.LinkVBO(vbo, 2, 5 * sizeof(float), 3 * sizeof(float));
+	//vao.LinkVBO(vbo, 2, 8 * sizeof(float), 6 * sizeof(float));
 	// Unbind buffers
 	vao.unBind();
 	vbo.unBind();
-	ebo.unBind();	
+	//ebo.unBind();	
 
 
 	Texture tex1("Textures/container.jpg");
@@ -118,39 +205,48 @@ void Window::runWindow()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	
+	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+
+
+
 
 	while (!glfwWindowShouldClose(window))
 	{
-		HandleKeyBoardEvents();
+
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		handleKeyBoardEvents();
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Render here
 		// Activate the shader program
 		
 		//LOG_FUNC();
 		float timeValue = glfwGetTime();
-
+		float normalizedTimeValue = 0.5f + 0.5f * std::sin(timeValue);
 		// Calculate RGB offsets based on time
-		float red = 0.5f + 0.5f * std::sin(timeValue);
-		float green = 0.5f + 0.5f * sin(timeValue + 2.094f); // 2?/3 radians phase shift
-		float blue = 0.5f + 0.5f * sin(timeValue + 4.188f); // 4?/3 radians phase shift
-
-		glm::mat4 trans = glm::mat4(1.0f);
-		//float rotSpeed = 50.0f;
-		//trans = glm::translate(trans, glm::vec3(1, 1, 0));
-		//trans = glm::rotate(trans, glm::radians((float)glfwGetTime()* rotSpeed), glm::vec3(0.0f, 0.0f, 1.0f));
-		//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 1));*/
-		shader.setMat4f("transform", trans);
 		
+		// Rodate the model so that it lies flat on the floor
+		glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::rotate(model, glm::radians(50.0f)*timeValue, glm::vec3(1, 0, 0));
+		shader.setMat4f("model", model);
+
+		shader.setMat4f("view", camera.getViewMat());
+
+		glm::mat4 projection = glm::mat4(1.0f);
+		projection = glm::perspective(glm::radians(camera.getFOV()), 800.0f / 600.0f, 0.1f, 100.0f);
+		shader.setMat4f("projection", projection);
+
 		
 		// Send the color offset to the shader
-		shader.setVector3f("colorOffset", glm::vec3(red, green, blue));
-		shader.setFloat("alpha", red);
+		shader.setFloat("alpha", normalizedTimeValue);
 
-
-		
 		tex1.bind();
 		tex1.setActiveTexture(0);
 
@@ -158,8 +254,18 @@ void Window::runWindow()
 		tex2.setActiveTexture(1);
 
 		vao.bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			shader.setMat4f("model", model);
 
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+		
 		
 
 		// Swap to display updated buffer
@@ -171,7 +277,6 @@ void Window::runWindow()
 
 	shader.cleanUp();
 }
-
 
 void Window::cleanUp()
 {
@@ -186,13 +291,75 @@ void Window::cleanUp()
 	glfwTerminate();
 }
 
-void Window::HandleKeyBoardEvents()
+void Window::handleKeyBoardEvents()
 {
+	LOG_FUNC();
+
 	// Keyboard events
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+	{
+		camera.moveForward(deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
+	{
+		camera.moveForward(-deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.moveRight(deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.moveRight(-deltaTime);
+	}
+
+
+}
+
+void Window::handleResizeCallback(int width, int height)
+{
+	LOG_FUNC();
+
+	glViewport(0, 0, width, height);
+}
+
+void Window::handleMouseCallback(double xPos, double yPos)
+{
+	LOG_FUNC();
+
+	static bool firstMouse = true;
+
+	if (firstMouse)
+	{
+		lastCursorX = xPos;
+		lastCursorY = yPos;
+		firstMouse = false;
+	}
+
+
+	float xoffset = xPos - lastCursorX;
+	float yoffset = lastCursorY - yPos; // reversed since y-coordinates range from bottom to top
+	lastCursorX = xPos;
+	lastCursorY = yPos;
+
+	const float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	// Move the camera
+	camera.onCursorMoved(xoffset, yoffset);
+
+}
+
+void Window::handleScrollCallback(double xOffset, double yOffset)
+{
+	LOG_FUNC();
+
+	camera.onMouseScroll(xOffset, yOffset);
 }
 
 

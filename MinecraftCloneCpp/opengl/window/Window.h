@@ -9,35 +9,49 @@
 #include "openGL/buffer/EBO.h"
 #include "openGL/buffer/VAO.h"
 
+#include "Camera/Camera.h"
+
 #include "GlobalProperties.h"
 
 class Window 
 {
-	static std::unique_ptr<Window> instance;
-	static GLFWwindow* window;
+
+	GLFWwindow* window;
 
 public:
 
-	Window() {};
-	~Window() { cleanUp(); };
+	Window(int width, int height, const std::string& windowName);
+	~Window();
 
 	// Initialize window 
-	static bool initWindow();
+	bool initWindow(int width, int height, const std::string& windowName);
 
 	// Returns the reference of glfw Window
-	 static GLFWwindow* getGlfwWindow() { return window; };
+	 GLFWwindow* getGlfwWindow() { return window; };
 
 	// Starts the render loop 
-	 static void runWindow();
+	// TODO Make an application class and a render class
+	 void run();
+
 
 	// Terminate proccesses and cleanup
-	static void cleanUp();
+	 void cleanUp();
 
-	
+	// Handle Callback events
+	void handleResizeCallback(int width, int height);
+	void handleMouseCallback(double xpos, double ypos);
+	void handleScrollCallback(double xOffset, double yOffset);
 private:
-	Window(const Window&) = delete;
-	Window& operator=(const Window&) = delete;
 
-	static void HandleKeyBoardEvents();
+	Camera camera;
+
+	float deltaTime = 0.0;
+	float lastFrame = 0.0;
+
+	float lastCursorX;
+	float lastCursorY;
+
+	void handleKeyBoardEvents();
+	 
 
 };

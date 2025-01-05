@@ -5,7 +5,7 @@
 #include <string>
 
 
-#define LOG(level, _string, ...) Logger::log(LogLevel::level, "{}:: " + std::string(_string), __func__ , ##__VA_ARGS__)
+#define LOG(level, _string, ...) Logger::log(LogLevel::level, "{}::{}: " + std::string(_string), typeid(*this).name(), __func__ , ##__VA_ARGS__)
 #define LOG_FUNC() LOG(Verbose,"")
 
 enum class LogLevel {Verbose = 0,Log = 1,Warning = 2,Error = 3};
@@ -35,6 +35,8 @@ private:
 
 	// Returns the prefix used to display information about the current log level
 	static std::string getLogLevelPrefix(LogLevel level);
+
+	static std::string getLogColorPrefix(LogLevel level);
 };
 
 #pragma region Template Implementations
@@ -51,7 +53,7 @@ static void Logger::log(LogLevel level, const std::string& formatString, Args&&.
 		formatMessage(oss, formatString, std::forward<Args>(args)...);
 		
 		// Display formatted log messasge
-		std::cout << getLogLevelPrefix(level) << oss.str() << std::endl;
+		std::cout << getLogColorPrefix(level) <<getLogLevelPrefix(level) << oss.str() << std::endl;
 	}
 }
 

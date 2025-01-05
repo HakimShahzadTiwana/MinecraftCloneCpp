@@ -1,7 +1,9 @@
 #include "Texture.h"
-
+#include "Debugging/Logger.h"
 Texture::Texture(const std::string& texPath, bool bFlipped)
 {
+	LOG_FUNC();
+
 	// Images usually have flipped co-ordinates compared to texCoords so we flip them again
 	stbi_set_flip_vertically_on_load(!bFlipped);
 
@@ -9,10 +11,15 @@ Texture::Texture(const std::string& texPath, bool bFlipped)
 	int width, height, nChannels;
 	unsigned char* texData = stbi_load(texPath.c_str(), &width, &height, &nChannels, 0);
 
+	if (texData == nullptr) 
+	{
+		LOG(Warning, "Could not load texture with path {}", texPath);
+		return;
+	}
+
 	// Reset to default state
 	stbi_set_flip_vertically_on_load(bFlipped);
 
-	
 	glGenTextures(1, &ID);
 	bind();
 
@@ -36,15 +43,21 @@ Texture::Texture(const std::string& texPath, bool bFlipped)
 
 void Texture::bind()
 {
+	LOG_FUNC();
+
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
 void Texture::unbind()
 {
+	LOG_FUNC();
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::setActiveTexture(int activeTextureSlot)
 {
+	LOG_FUNC();
+
 	glActiveTexture(GL_TEXTURE0+activeTextureSlot);
 }

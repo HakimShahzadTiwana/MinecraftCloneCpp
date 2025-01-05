@@ -1,6 +1,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
-#include "Debug/Logger.h"
+#include "Debugging/Logger.h"
 #include "fstream"
 
 
@@ -84,6 +84,8 @@ Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentS
 
 void Shader::activate()
 {
+	LOG_FUNC();
+
 	glUseProgram(ID);
 }
 
@@ -96,29 +98,41 @@ void Shader::cleanUp()
 
 void Shader::setBool(const std::string& name, bool value) const
 {
+	LOG_FUNC();
+
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 void Shader::setInt(const std::string& name, int value) const
 {
+	LOG_FUNC();
+
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 void Shader::setFloat(const std::string& name, float value) const
 {
+	LOG_FUNC();
+
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 void Shader::setVector3f(const std::string& name, glm::vec3 vec) const
 {
+	LOG_FUNC();
+
 	glUniform3f(glGetUniformLocation(ID, name.c_str()), vec.x, vec.y, vec.z);
 }
 
 void Shader::setMat4f(const std::string& name, glm::mat4 mat) const
 {
+	LOG_FUNC();
+
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 
 std::string Shader::read_file_contents(const std::string& file)
 {
+	LOG_FUNC();
+
 	std::ifstream in(file, std::ios::binary);
 	if (in) 
 	{

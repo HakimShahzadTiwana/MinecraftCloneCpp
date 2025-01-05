@@ -1,6 +1,5 @@
 #version 460 core
 
-in vec4 vertexColor;
 in vec2 texCoords;
 
 out vec4 FragColor;
@@ -11,5 +10,5 @@ uniform float alpha;
 
 void main()
 {
-    FragColor = mix(texture(texSampler1, texCoords), texture(texSampler2, texCoords), alpha) * vertexColor;
+    FragColor = mix(texture(texSampler1, texCoords), texture(texSampler2, texCoords), alpha);
 } 
