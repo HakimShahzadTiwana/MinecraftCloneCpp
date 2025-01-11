@@ -3,8 +3,12 @@
 #include "Debugging/Logger.h"
 #include "fstream"
 
-
 Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
+{
+	init(vertexShaderFile, fragmentShaderFile);
+}
+
+void Shader::init(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
 {
 	LOG_FUNC();
 
@@ -17,7 +21,7 @@ Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentS
 	// Compilation results
 	int bSuccess;
 	char info[512];
-	
+
 	// Create Vertex Shader, inject its source code and compile
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -25,12 +29,12 @@ Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentS
 
 	// Check Compilation Status
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &bSuccess);
-	if (!bSuccess) 
+	if (!bSuccess)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, info);
 		LOG(Warning, "Failed to compile vertex shader. INFO : {}", info);
 	}
-	else 
+	else
 	{
 		LOG(Log, "Compiled Vertex Shader Successfully.");
 	}
@@ -59,7 +63,7 @@ Shader::Shader(const std::string& vertexShaderFile, const std::string& fragmentS
 
 	// Attach Shaders to Program
 	glAttachShader(ID, vertexShader);
-	glAttachShader(ID,fragmentShader);
+	glAttachShader(ID, fragmentShader);
 
 	// Link Program
 	glLinkProgram(ID);

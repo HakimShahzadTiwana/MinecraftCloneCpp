@@ -1,5 +1,6 @@
 #pragma once
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 struct OpenGLProperties
 {
@@ -17,4 +18,12 @@ struct WindowProperties
 struct RenderProperties 
 {
 	static constexpr bool wireFrameMode = false;
+};
+
+struct CameraProperties 
+{
+	inline static float fov = 90.0f;
+
+	inline static glm::mat4 viewMatrix = glm::mat4(1.0f);
+
 };

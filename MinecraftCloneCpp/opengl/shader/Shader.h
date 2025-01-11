@@ -12,6 +12,9 @@ private:
 public:
 	
 	Shader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
+	~Shader() { cleanUp(); };
+
+	void init(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
 
 	void activate();
 	void cleanUp();

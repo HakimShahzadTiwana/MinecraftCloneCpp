@@ -5,6 +5,8 @@
 #include "Debugging/Logger.h"
 #include "openGL/Texture/Texture.h"
 
+#include "App/src/Chunk/Chunk.h"
+
 
 Window::Window(int width, int height, const std::string& windowName)
 {
@@ -57,8 +59,6 @@ bool Window::initWindow(int width, int height, const std::string& windowName)
 		return false;
 	}
 
-
-
 	// Set viewport
 	glViewport(0, 0, width, height);
 
@@ -96,105 +96,8 @@ void Window::run()
 {
 	LOG_FUNC();
 
-	float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-
-	unsigned int indices[] = {  // note that we start from 0!
-		0, 1, 3,   // first triangle
-		1, 2, 3    // second triangle
-	};
-
-
-
-	Shader shader("Shaders/basic.vert", "Shaders/basic.frag");
-
-	// Create buffers
-	VAO vao;
-	VBO vbo;
-	//EBO ebo;
-
-	// Bind buffers
-	vao.bind();
-	vbo.bind();
-	//ebo.bind();
-
-	// upload data to buffers
-	vbo.uploadData(vertices, sizeof(vertices));
-	//ebo.uploadData(indices, sizeof(indices));
-
-	// Link buffers to vao
-	vao.LinkVBO(vbo, 0, 5 * sizeof(float), 0);
-	vao.LinkVBO(vbo, 2, 5 * sizeof(float), 3 * sizeof(float));
-	//vao.LinkVBO(vbo, 2, 8 * sizeof(float), 6 * sizeof(float));
-	// Unbind buffers
-	vao.unBind();
-	vbo.unBind();
-	//ebo.unBind();	
-
-
-	Texture tex1("Textures/container.jpg");
-	Texture tex2("Textures/wall.jpg");
-	
-	shader.activate();
-	shader.setInt("texSampler1", 0);
-	shader.setInt("texSampler2", 1);
-
-
-
+	Chunk chunk;
+	chunk.generateChunk();
 
 	if (RenderProperties::wireFrameMode) 
 	{
@@ -206,11 +109,13 @@ void Window::run()
 	}
 	
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
-
-
+	Shader shader("Shaders/basic.vert", "Shaders/basic.frag");
+	shader.activate();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -221,53 +126,24 @@ void Window::run()
 
 		handleKeyBoardEvents();
 
+		CameraProperties::fov = camera.getFOV();
+		CameraProperties::viewMatrix = camera.getViewMat();
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Render here
-		// Activate the shader program
 		
-		//LOG_FUNC();
-		float timeValue = glfwGetTime();
-		float normalizedTimeValue = 0.5f + 0.5f * std::sin(timeValue);
-		// Calculate RGB offsets based on time
-		
-		// Rodate the model so that it lies flat on the floor
 		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(50.0f)*timeValue, glm::vec3(1, 0, 0));
 		shader.setMat4f("model", model);
-
 		shader.setMat4f("view", camera.getViewMat());
-
 		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(camera.getFOV()), 800.0f / 600.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(CameraProperties::fov), (float) WindowProperties::width / WindowProperties::height, 0.1f, 100.0f);
 		shader.setMat4f("projection", projection);
 
-		
-		// Send the color offset to the shader
-		shader.setFloat("alpha", normalizedTimeValue);
+		chunk.draw();
 
-		tex1.bind();
-		tex1.setActiveTexture(0);
-
-		tex2.bind();
-		tex2.setActiveTexture(1);
-
-		vao.bind();
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			shader.setMat4f("model", model);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
 		
 		
-
 		// Swap to display updated buffer
 		glfwSwapBuffers(window);
 
@@ -275,7 +151,6 @@ void Window::run()
 		glfwPollEvents();
 	}
 
-	shader.cleanUp();
 }
 
 void Window::cleanUp()

@@ -6,7 +6,12 @@
 
 
 #define LOG(level, _string, ...) Logger::log(LogLevel::level, "{}::{}: " + std::string(_string), typeid(*this).name(), __func__ , ##__VA_ARGS__)
+
+#define LOG_STATIC(level, _string, ...) Logger::log(LogLevel::level, "{}: " + std::string(_string), __func__ , ##__VA_ARGS__)
+
 #define LOG_FUNC() LOG(Verbose,"")
+
+#define LOG_STATIC_FUNC() LOG_STATIC(Verbose,"")
 
 enum class LogLevel {Verbose = 0,Log = 1,Warning = 2,Error = 3};
 

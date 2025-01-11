@@ -9,6 +9,6 @@ public:
 	virtual void bind();
 	virtual void unBind();
 	virtual void cleanUp();
-	void LinkVBO(VBO vbo, GLuint layout, GLsizei stride, int offset);
+	void LinkVBO(VBO vbo, GLuint layout, GLint elementCount, GLsizei stride, int offset);
 
 };

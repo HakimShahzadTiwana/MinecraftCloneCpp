@@ -125,4 +125,7 @@ tmp/
 *.nupkg
 *.snupkg
 
+# Others
+MinecraftClassicTextures/
+
 # End of `.gitignore`
