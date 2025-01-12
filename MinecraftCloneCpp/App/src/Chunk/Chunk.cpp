@@ -2,7 +2,7 @@
 #include "Debugging/Logger.h"
 #include <random>
 
-Chunk::Chunk()
+Chunk::Chunk(glm::vec3 pos) : position(pos)
 {
 	mBlocks.reserve(ChunkInfo::chunkWidth * ChunkInfo::chunkHeight * ChunkInfo::chunkLength);
 }
@@ -31,126 +31,21 @@ void Chunk::generateChunk()
 			{
 
 				int randomNumber = dist(gen);
+
 				BlockType type = BlockType::Grass;
 
-				glm::vec3 blockPos = glm::vec3(x, y, z);
+				glm::vec3 blockPos = glm::vec3(position.x + x,position.y + y, position.z + z);
 
-				//Place block in chunk
+				// Place block in chunk
 				mBlocks.emplace_back(type, blockPos);
 				Block& currentBlock = mBlocks.back();
 
 				// Add faces to the blocks that are at the sides of the chunk
-				{
-					if (blockPos.x == 0)
-					{
-						currentBlock.AddFace(BlockFace::Left);
-					}
+				HandleChunkFaces(currentBlock);
 
-					if (blockPos.x == ChunkInfo::chunkWidth - 1)
-					{
-						currentBlock.AddFace(BlockFace::Right);
-					}
-
-					if (blockPos.y == 0)
-					{
-						currentBlock.AddFace(BlockFace::Bottom);
-					}
-
-					if (blockPos.y == ChunkInfo::chunkHeight - 1)
-					{
-						currentBlock.AddFace(BlockFace::Top);
-					}
-
-					if (blockPos.z == 0)
-					{
-						currentBlock.AddFace(BlockFace::Back);
-					}
-
-					if (blockPos.z == ChunkInfo::chunkLength - 1)
-					{
-						currentBlock.AddFace(BlockFace::Front);
-					}
-				}
-
-				int above  = getFlattenedIndex(glm::vec3(blockPos.x    , blockPos.y + 1, blockPos.z    ));
-				int below  = getFlattenedIndex(glm::vec3(blockPos.x    , blockPos.y - 1, blockPos.z    ));
-				int right  = getFlattenedIndex(glm::vec3(blockPos.x + 1, blockPos.y    , blockPos.z    ));
-				int left   = getFlattenedIndex(glm::vec3(blockPos.x - 1, blockPos.y    , blockPos.z    ));
-				int front  = getFlattenedIndex(glm::vec3(blockPos.x    , blockPos.y    , blockPos.z + 1));
-				int behind = getFlattenedIndex(glm::vec3(blockPos.x    , blockPos.y    , blockPos.z - 1));
-
+				// Add faces to blocks that are next to transparent ones
+				HandleTransparentFaces(currentBlock);
 				
-
-				// Add faces to blocks that are next to transparent blocks
-				if (currentBlock.isTransparent())
-				{
-					if (above < mBlocks.size() && !mBlocks[above].isTransparent())
-					{
-						mBlocks[above].AddFace(BlockFace::Bottom);
-					}
-
-					if (below < mBlocks.size() && !mBlocks[below].isTransparent())
-					{
-						mBlocks[below].AddFace(BlockFace::Top);
-					}
-
-					if (right < mBlocks.size() && !mBlocks[right].isTransparent())
-					{
-						mBlocks[right].AddFace(BlockFace::Back);
-					}
-
-					if (left < mBlocks.size() && !mBlocks[left].isTransparent())
-					{
-						mBlocks[left].AddFace(BlockFace::Front);
-					}
-
-					if (front < mBlocks.size() && !mBlocks[front].isTransparent())
-					{
-						mBlocks[front].AddFace(BlockFace::Left);
-					}
-
-					if (behind < mBlocks.size() && !mBlocks[behind].isTransparent())
-					{
-						mBlocks[behind].AddFace(BlockFace::Right);
-					}
-				}
-
-					
-				// If block is not transparent check if there are any surrounding blocks. 
-				else 
-				{
-					if (above < mBlocks.size() && mBlocks[above].isTransparent())
-					{
-						currentBlock.AddFace(BlockFace::Top);
-					}
-
-					if (below < mBlocks.size() && mBlocks[below].isTransparent())
-					{
-						currentBlock.AddFace(BlockFace::Bottom);
-					}
-
-					if (right < mBlocks.size() && mBlocks[right].isTransparent())
-					{
-						currentBlock.AddFace(BlockFace::Right);
-					}
-
-					if (left < mBlocks.size() && mBlocks[left].isTransparent())
-					{
-						currentBlock.AddFace(BlockFace::Left);
-					}
-
-					if (front < mBlocks.size() && mBlocks[front].isTransparent())
-					{
-						currentBlock.AddFace(BlockFace::Front);
-					}
-
-					if (behind < mBlocks.size() && mBlocks[behind].isTransparent())
-					{
-						currentBlock.AddFace(BlockFace::Back);
-					}
-				}
-
-
 			}
 		}
 	}
@@ -169,6 +64,119 @@ void Chunk::draw()
 		
 	}
 	//float drawTime = drawTimer.stop();
+}
+
+void Chunk::HandleChunkFaces(Block& block)
+{
+	if (std::abs(block.position.x - position.x) == 0)
+	{
+		block.AddFace(BlockFace::Left);
+	}
+
+	if (std::abs(block.position.x - position.x) == ChunkInfo::chunkWidth - 1)
+	{
+		block.AddFace(BlockFace::Right);
+	}
+
+	if (std::abs(block.position.y - position.y) == 0)
+	{
+		block.AddFace(BlockFace::Bottom);
+	}
+
+	if (std::abs(block.position.y - position.y) == ChunkInfo::chunkHeight - 1)
+	{
+		block.AddFace(BlockFace::Top);
+	}
+
+	if (std::abs(block.position.z - position.z) == 0)
+	{
+		block.AddFace(BlockFace::Back);
+	}
+
+	if (std::abs(block.position.z - position.z) == ChunkInfo::chunkLength - 1)
+	{
+		block.AddFace(BlockFace::Front);
+	}
+}
+
+void Chunk::HandleTransparentFaces(Block& block)
+{
+	int above = getFlattenedIndex(glm::vec3(block.position.x, block.position.y + 1, block.position.z));
+	int below = getFlattenedIndex(glm::vec3(block.position.x, block.position.y - 1, block.position.z));
+	int right = getFlattenedIndex(glm::vec3(block.position.x + 1, block.position.y, block.position.z));
+	int left = getFlattenedIndex(glm::vec3(block.position.x - 1, block.position.y, block.position.z));
+	int front = getFlattenedIndex(glm::vec3(block.position.x, block.position.y, block.position.z + 1));
+	int behind = getFlattenedIndex(glm::vec3(block.position.x, block.position.y, block.position.z - 1));
+
+
+
+	// Add faces to blocks that are next to transparent blocks
+	if (block.isTransparent())
+	{
+		if (above < mBlocks.size() && !mBlocks[above].isTransparent())
+		{
+			mBlocks[above].AddFace(BlockFace::Bottom);
+		}
+
+		if (below < mBlocks.size() && !mBlocks[below].isTransparent())
+		{
+			mBlocks[below].AddFace(BlockFace::Top);
+		}
+
+		if (right < mBlocks.size() && !mBlocks[right].isTransparent())
+		{
+			mBlocks[right].AddFace(BlockFace::Back);
+		}
+
+		if (left < mBlocks.size() && !mBlocks[left].isTransparent())
+		{
+			mBlocks[left].AddFace(BlockFace::Front);
+		}
+
+		if (front < mBlocks.size() && !mBlocks[front].isTransparent())
+		{
+			mBlocks[front].AddFace(BlockFace::Left);
+		}
+
+		if (behind < mBlocks.size() && !mBlocks[behind].isTransparent())
+		{
+			mBlocks[behind].AddFace(BlockFace::Right);
+		}
+	}
+	// If block is not transparent check if there are any surrounding blocks. 
+	else
+	{
+		if (above < mBlocks.size() && mBlocks[above].isTransparent())
+		{
+			block.AddFace(BlockFace::Top);
+		}
+
+		if (below < mBlocks.size() && mBlocks[below].isTransparent())
+		{
+			block.AddFace(BlockFace::Bottom);
+		}
+
+		if (right < mBlocks.size() && mBlocks[right].isTransparent())
+		{
+			block.AddFace(BlockFace::Right);
+		}
+
+		if (left < mBlocks.size() && mBlocks[left].isTransparent())
+		{
+			block.AddFace(BlockFace::Left);
+		}
+
+		if (front < mBlocks.size() && mBlocks[front].isTransparent())
+		{
+			block.AddFace(BlockFace::Front);
+		}
+
+		if (behind < mBlocks.size() && mBlocks[behind].isTransparent())
+		{
+			block.AddFace(BlockFace::Back);
+		}
+	}
+
 }
 
 int Chunk::getFlattenedIndex(glm::vec3 pos)

@@ -141,6 +141,7 @@
     <ClInclude Include="App\src\Blocks\Block.h" />
     <ClInclude Include="App\src\Blocks\BlockInfo.h" />
     <ClInclude Include="App\src\Chunk\Chunk.h" />
+    <ClInclude Include="App\src\World\WorldChunks.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Debugging\Logger.h" />
     <ClInclude Include="Debugging\Timer.h" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="App\src\Blocks\Block.cpp" />
     <ClCompile Include="App\src\Chunk\Chunk.cpp" />
+    <ClCompile Include="App\src\World\WorldChunks.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Debugging\Logger.cpp" />
     <ClCompile Include="Debugging\Timer.cpp" />

@@ -5,7 +5,7 @@
 #include "Debugging/Logger.h"
 #include "openGL/Texture/Texture.h"
 
-#include "App/src/Chunk/Chunk.h"
+#include "App/src/World/WorldChunks.h"
 
 
 Window::Window(int width, int height, const std::string& windowName)
@@ -96,8 +96,8 @@ void Window::run()
 {
 	LOG_FUNC();
 
-	Chunk chunk;
-	chunk.generateChunk();
+	WorldChunks wc;
+	wc.generateChunks();
 
 	if (RenderProperties::wireFrameMode) 
 	{
@@ -140,8 +140,7 @@ void Window::run()
 		projection = glm::perspective(glm::radians(CameraProperties::fov), (float) WindowProperties::width / WindowProperties::height, 0.1f, 100.0f);
 		shader.setMat4f("projection", projection);
 
-		chunk.draw();
-
+		wc.draw();
 		
 		
 		// Swap to display updated buffer

@@ -105,6 +105,9 @@
     <ClCompile Include="App\src\Chunk\Chunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\src\World\WorldChunks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GlobalProperties.h">
@@ -150,6 +153,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\src\Chunk\Chunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\src\World\WorldChunks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
